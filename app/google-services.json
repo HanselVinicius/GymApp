@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "457289430761",
+    "project_id": "gymapp-f187a",
+    "storage_bucket": "gymapp-f187a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457289430761:android:3ae801752a032b3c716278",
+        "android_client_info": {
+          "package_name": "br.com.viniciusapps.gym_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA20cF2xLYhnJEIdxau2Xjvgucz5iS6Zzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
