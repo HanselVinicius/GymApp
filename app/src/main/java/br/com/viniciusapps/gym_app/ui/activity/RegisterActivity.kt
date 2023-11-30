@@ -32,7 +32,6 @@ class RegisterActivity:ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    RegisterComponent()
                 }
 
             }
@@ -72,11 +71,3 @@ fun RegisterComponent(navController: NavController) {
 
 }
 
-
-//@Preview(showBackground = true)
-//@Composable
-//fun RegisterPreview() {
-//    Gym_appTheme {
-//        RegisterComponent()
-//    }
-//}

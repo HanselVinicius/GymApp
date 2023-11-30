@@ -5,6 +5,8 @@ import android.util.Log
 import br.com.viniciusapps.gym_app.infra.validation.input.InputNotEmptyValidation
 import br.com.viniciusapps.gym_app.infra.validation.input.InputNullValidation
 import br.com.viniciusapps.gym_app.infra.validation.input.InputValidators
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 
 class Authentication {
@@ -42,20 +44,14 @@ class Authentication {
 
 
 
-    fun login() {
-        firebaseInstance.signInWithEmailAndPassword(this.username, this.password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-
-                } else {
-
-                }
-            }
+    fun login(callbackFun:OnCompleteListener<AuthResult>) {
+        firebaseInstance.signInWithEmailAndPassword(this.username.trim(), this.password.trim())
+            .addOnCompleteListener(callbackFun)
     }
 
 
     fun register() {
-        firebaseInstance.createUserWithEmailAndPassword(this.username, this.password)
+        firebaseInstance.createUserWithEmailAndPassword(this.username.trim(), this.password.trim())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.e("TAG", "register: teste registro " +task.result?.user )

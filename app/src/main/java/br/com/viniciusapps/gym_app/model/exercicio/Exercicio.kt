@@ -5,19 +5,19 @@ import java.net.URL
 class Exercicio {
 
     companion object{
-        fun create(nome:Long,imagem:URL,obsercacoes:String):Exercicio{
-            return Exercicio(nome,imagem,obsercacoes)
+        fun create(nome:Long, imagem:URL, observacoes:String):Exercicio{
+            return Exercicio(nome,imagem,observacoes)
         }
     }
 
     private var nome:Long
     private var imagem:URL
-    private var obsercacoes:String
+    private var observacoes:String
 
-    private constructor(nome:Long,imagem:URL,obsercacoes:String){
+    private constructor(nome:Long, imagem:URL, observacoes:String){
         this.nome = nome
         this.imagem = imagem
-        this.obsercacoes = obsercacoes
+        this.observacoes = observacoes
     }
 
 

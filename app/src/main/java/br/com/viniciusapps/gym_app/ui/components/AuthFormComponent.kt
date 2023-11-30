@@ -1,6 +1,5 @@
 package br.com.viniciusapps.gym_app.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,9 +37,16 @@ import androidx.navigation.NavController
 import br.com.viniciusapps.gym_app.ui.activity.RegisterActivity
 import br.com.viniciusapps.gym_app.ui.theme.OrangeStrong
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthComponent(modifier: Modifier = Modifier, text:String, onClick: (username:String,password:String) -> Unit,navController: NavController? = null,tela:Class<*>? = null) {
+fun AuthComponent(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: (username: String, password: String) -> Unit,
+    navController: NavController? = null,
+    tela: Class<*>? = null
+) {
 
     Column(
         modifier = Modifier
@@ -55,37 +62,44 @@ fun AuthComponent(modifier: Modifier = Modifier, text:String, onClick: (username
         Text(
             text = text,
             modifier = modifier,
-            style = TextStyle(fontSize = 40.sp, color = OrangeStrong, fontFamily = FontFamily.SansSerif)
+            style = TextStyle(
+                fontSize = 40.sp,
+                color = OrangeStrong,
+                fontFamily = FontFamily.SansSerif
+            )
         )
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             value = username.value,
-            label = { Text(text = "Email")},
+            label = { Text(text = "Email") },
             singleLine = true,
-            onValueChange = {username.value = it})
+            onValueChange = { username.value = it })
 
         Spacer(modifier = Modifier.height(20.dp))
 
         TextField(value = password.value,
-            label = { Text(text = "Senha")},
+            label = { Text(text = "Senha") },
             singleLine = true,
-            onValueChange = {password.value = it},
-            visualTransformation = if(passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+            onValueChange = { password.value = it },
+            visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
                 val image = if (passwordVisible.value)
                     Icons.Filled.Visibility
                 else Icons.Filled.VisibilityOff
                 val description = if (passwordVisible.value) "Esconder Senha" else "Mostrar Senha"
-                IconButton(onClick = {passwordVisible.value = !passwordVisible.value}){
-                    Icon(imageVector  = image, description)
+                IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+                    Icon(imageVector = image, description)
                 }
-            } )
+            })
         Spacer(modifier = Modifier.height(20.dp))
-        IsRegisterScreen(tela,navController!!)
+        IsRegisterScreen(tela, navController!!, password.value.text)
         Spacer(modifier = Modifier.height(20.dp))
-        ElevatedButton(onClick = { onClick(username.value.text,password.value.text)}, colors =  ButtonDefaults.buttonColors(
-            OrangeStrong)) {
+        ElevatedButton(onClick = {
+            onClick(username.value.text, password.value.text)
+        }, colors = ButtonDefaults.buttonColors(
+            OrangeStrong
+        )) {
             Text(text = text)
         }
     }
@@ -94,8 +108,8 @@ fun AuthComponent(modifier: Modifier = Modifier, text:String, onClick: (username
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IsRegisterScreen(tela:Class<*>? = null,navController: NavController){
-    if(tela != RegisterActivity::class.java) {
+fun IsRegisterScreen(tela: Class<*>? = null, navController: NavController, password: String) {
+    if (tela != RegisterActivity::class.java) {
         Spacer(modifier = Modifier.height(20.dp))
         ClickableText(
             text = AnnotatedString("Já tem uma conta?"),
@@ -110,20 +124,22 @@ fun IsRegisterScreen(tela:Class<*>? = null,navController: NavController){
 
     Spacer(modifier = Modifier.height(20.dp))
     TextField(value = secondPassword.value,
-        label = { Text(text = "Confirmar Senha")},
+        label = { Text(text = "Confirmar Senha") },
         singleLine = true,
-        onValueChange = {secondPassword.value = it},
-        visualTransformation = if(secondPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+        onValueChange = { secondPassword.value = it },
+        visualTransformation = if (secondPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        isError = !secondPassword.value.equals(password),
         trailingIcon = {
             val image = if (secondPasswordVisible.value)
                 Icons.Filled.Visibility
             else Icons.Filled.VisibilityOff
             val description = if (secondPasswordVisible.value) "Esconder Senha" else "Mostrar Senha"
-            IconButton(onClick = {secondPasswordVisible.value = !secondPasswordVisible.value}){
-                Icon(imageVector  = image, description)
+            IconButton(onClick = { secondPasswordVisible.value = !secondPasswordVisible.value }) {
+                Icon(imageVector = image, description)
             }
-        } )
+        }
+    )
 
 
 }

@@ -24,6 +24,7 @@ import br.com.viniciusapps.gym_app.infra.navigation.SetupNavigation
 import br.com.viniciusapps.gym_app.ui.theme.Gym_appTheme
 import br.com.viniciusapps.gym_app.ui.components.AuthComponent
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
@@ -57,18 +58,7 @@ fun LoginComponent(navController: NavController) {
         Column(modifier = Modifier.fillMaxHeight()) {
             AuthComponent(text = "Login", onClick = { username, password ->
                 run {
-                    try {
-                        val auth = Authentication.create(FirebaseAuth.getInstance(), username, password)
-                        auth.login()
-                    }catch (ex: RuntimeException){
-                        scope.launch {
-                            snac.showSnackbar("Entradas Inválidas")
-                        }
-                    }catch (ex:NullPointerException){
-                        scope.launch {
-                            snac.showSnackbar("Entradas Inválidas")
-                        }
-                    }
+                    loginAction(username, password, scope, navController, snac)
                 }
             }, navController = navController)
         }
@@ -77,13 +67,27 @@ fun LoginComponent(navController: NavController) {
 }
 
 
-
-
-
-//@Preview(showBackground = true)
-//@Composable
-//fun LoginPreview() {
-//    Gym_appTheme {
-//        LoginComponent()
-//    }
-//}
+fun loginAction(username: String, password: String, scope: CoroutineScope, navController: NavController, snac: SnackbarHostState) {
+    try {
+        val auth = Authentication.create(FirebaseAuth.getInstance(), username, password)
+        auth.login { task ->
+            run {
+                if(!task.isSuccessful) {
+                    scope.launch {
+                        snac.showSnackbar("Entradas Inválidas")
+                    }
+                    return@run
+                }
+                navController.navigate("home/${task.result.user?.uid}",)
+            }
+        }
+    }catch (ex: RuntimeException){
+        scope.launch {
+            snac.showSnackbar("Entradas Inválidas")
+        }
+    }catch (ex:NullPointerException){
+        scope.launch {
+            snac.showSnackbar("Entradas Inválidas")
+        }
+    }
+}
