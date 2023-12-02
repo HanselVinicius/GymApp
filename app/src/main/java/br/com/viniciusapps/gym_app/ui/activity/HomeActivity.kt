@@ -18,6 +18,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -31,32 +32,35 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import br.com.viniciusapps.gym_app.infra.firebase.firestore_db.FirestoreTreinoRepositoryImpl
-import br.com.viniciusapps.gym_app.model.exercicio.Exercicio
+import br.com.viniciusapps.gym_app.infra.firebase.storage.Storage
 import br.com.viniciusapps.gym_app.model.treino.Treino
 import br.com.viniciusapps.gym_app.ui.components.DefaultCard
 import br.com.viniciusapps.gym_app.ui.components.GenericAlertDialog
 import br.com.viniciusapps.gym_app.ui.theme.BlueStrong
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Date
+import java.util.Locale
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(userId: String,navHostController: NavHostController) {
-//    FirestoreTreinoRepositoryImpl(FirebaseFirestore.getInstance()).getAll()
+
     Scaffold(
         content = {
-            CardCreate(modifier = Modifier.padding(vertical = 16.dp))
+            CardCreate(modifier = Modifier.padding(vertical = 16.dp),userId,navHostController)
         },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = BlueStrong,
                 onClick = {
-                    navHostController.navigate("form")
+                    navHostController.navigate("form/${userId}")
                 },
                 modifier = Modifier
                     .padding(16.dp)
@@ -76,25 +80,19 @@ fun HomePreview() {
 }
 
 @Composable
-private fun CardCreate(modifier: Modifier) {
+private fun CardCreate(modifier: Modifier, userId: String,nav:NavHostController) {
     var showDialog by remember { mutableStateOf(false) }
     var deleteIndex by remember { mutableIntStateOf(0) }
 
-    val listDeTreinos = remember {
-        mutableStateListOf(
-            Treino.create(
-                nome = System.currentTimeMillis(),
-                descricao = "Treino para hoje",
-                data = Timestamp(Date(System.currentTimeMillis())),
-                exercicios = arrayListOf(
-                    Exercicio.create(
-                        nome = System.currentTimeMillis(),
-                        imagem = URL("https://example.com/image.jpg"),
-                        observacoes = "Realizar 3 séries de 15 repetições"
-                    )
-                )
-            )
-        )
+    var listDeTreinos by remember { mutableStateOf<List<Treino>>(emptyList()) }
+
+    val firestoreRepository = remember { FirestoreTreinoRepositoryImpl(FirebaseFirestore.getInstance()) }
+
+    LaunchedEffect(userId) {
+         firestoreRepository.getAll(userId) {
+            listDeTreinos = it
+        }
+
     }
 
     Column(
@@ -106,15 +104,20 @@ private fun CardCreate(modifier: Modifier) {
     ) {
         LazyColumn {
             items(listDeTreinos) { item ->
+                val formattedDateTime = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                    .format(item.getData().toDate())
                 DefaultCard(
                     "Nome:${item.getNome()}",
                     "Descrição:${item.getDescricao()}",
-                    "Data:${item.getData()}",
-                    onClick = {},
+                    "Data:${formattedDateTime}",
+                    onClick = {
+                        nav.navigate("form/${userId}?treino=${Gson().toJson(item)}")
+                    },
                     image = "",
                     onDelete = {
                         showDialog = true
                         deleteIndex = listDeTreinos.indexOf(item)
+
                     }
                 )
             }
@@ -125,8 +128,14 @@ private fun CardCreate(modifier: Modifier) {
                 "Excluir treino",
                 "Deseja excluir o treino?",
                 onConfirm = {
-                    Log.d("HomeActivity", "onConfirm: ")
-                    listDeTreinos.removeAt(deleteIndex)
+                    val itemAExcluir = listDeTreinos[deleteIndex]
+                    firestoreRepository.delete(itemAExcluir)
+                    itemAExcluir.getExercicios().forEach { exercicio ->
+                        Storage().deleteFile(exercicio.getImageName())
+                    }
+                    listDeTreinos.toMutableList().apply {
+                        removeAt(deleteIndex)
+                    }
                     showDialog = false
                 },
                 onDismiss = {
@@ -136,5 +145,7 @@ private fun CardCreate(modifier: Modifier) {
         }
     }
 }
+
+
 
 

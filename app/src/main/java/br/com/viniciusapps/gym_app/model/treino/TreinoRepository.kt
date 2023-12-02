@@ -5,11 +5,11 @@ import com.google.firebase.firestore.DocumentReference
 
 interface TreinoRepository {
 
-        fun save(treino: Treino):Task<DocumentReference>
+        fun save(treino: Treino,onResult: ()->Unit)
 
-//        fun update(treino: Treino)
-//
-//        fun delete(treino: Treino)
-//
-        fun getAll(): ArrayList<Treino>
+        fun update(treino: Treino,onResult: ()->Unit)
+
+        fun delete(treino: Treino)
+
+        fun getAll(userId:String,onGetCallback:(ArrayList<Treino>)->Unit)
 }

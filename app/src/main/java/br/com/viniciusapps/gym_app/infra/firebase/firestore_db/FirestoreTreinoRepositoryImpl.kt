@@ -2,39 +2,49 @@ package br.com.viniciusapps.gym_app.infra.firebase.firestore_db
 
 
 import android.util.Log
-import br.com.viniciusapps.gym_app.model.exercicio.Exercicio
 import br.com.viniciusapps.gym_app.model.treino.Treino
 import br.com.viniciusapps.gym_app.model.treino.TreinoRepository
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import java.net.URL
 
 class FirestoreTreinoRepositoryImpl(private val firebaseFirestore: FirebaseFirestore) : TreinoRepository{
-    override fun save(treino: Treino): Task<DocumentReference> {
-       return this.firebaseFirestore.collection("Treino").add(treino)
+    override fun save(treino: Treino,onResult: ()->Unit) {
+        this.firebaseFirestore.collection("Treino").add(treino).addOnCompleteListener {
+            onResult()
+        }
     }
 
-//    override fun update(treino: Treino) {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override fun delete(treino: Treino) {
-//        TODO("Not yet implemented")
-//    }
-//
-    override fun getAll(): ArrayList<Treino> {
-        val listDeTreinos = ArrayList<Treino>()
-        this.firebaseFirestore.collection(Treino::javaClass.name).get().addOnSuccessListener { result ->
+    override fun update(treino: Treino,onResult: ()->Unit) {
+        this.firebaseFirestore.collection("Treino").document(treino.getDocumentId()).set(treino).addOnCompleteListener {
+            onResult()
+        }
+    }
+
+    override fun delete(treino: Treino) {
+        this.firebaseFirestore.collection("Treino").document(treino.getDocumentId()).delete()
+    }
+
+override fun getAll(userId: String, onGetCallback:(ArrayList<Treino>)->Unit) {
+    val listDeTreinos = ArrayList<Treino>()
+    this.firebaseFirestore.collection("Treino").whereEqualTo("userId", userId).get()
+        .addOnSuccessListener { result ->
             for (document in result) {
-                val treino = document.toObject(Treino::class.java)
+                val treino = Treino.fromFirebaseCreate(
+                    document.id,
+                    document.data["userId"] as String,
+                    document.data["nome"] as Long,
+                    document.data["descricao"] as String,
+                    document.data["data"] as Timestamp,
+                    document.data["exercicios"] as List<Map<String, Any>>,
+                    document.data["active"] as Boolean)
                 listDeTreinos.add(treino)
             }
-        }.addOnFailureListener { exception ->
-            Log.w("FirestoreTreinoRepositoryImpl", "Error getting documents.", exception)
+            onGetCallback(listDeTreinos)
+            Log.d("TAG", "getAll: data fetched $listDeTreinos " )
         }
-        return listDeTreinos
-    }
+}
+
+
 
 
 

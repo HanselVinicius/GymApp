@@ -7,12 +7,34 @@ import com.google.firebase.storage.storage
 
 class Storage {
 
-
-     fun addFile(
+    fun addFile(imageName: String,
         byteArray: ByteArray,
         onCompleteListener: OnCompleteListener<UploadTask.TaskSnapshot>
     ) {
-        Firebase.storage("gs://gymapp-f187a.appspot.com").reference.child("teste")
-            .putBytes(byteArray).addOnCompleteListener(onCompleteListener)
+
+        val dataRef = Firebase.storage("gs://gymapp-f187a.appspot.com").reference.child(
+            "imagens_exercicios"
+        ).child(imageName)
+        dataRef.putBytes(byteArray).addOnCompleteListener(onCompleteListener)
     }
+
+    fun updateFile(imageName: String,
+        byteArray: ByteArray,
+        onCompleteListener: OnCompleteListener<UploadTask.TaskSnapshot>
+    ) {
+
+        val dataRef = Firebase.storage("gs://gymapp-f187a.appspot.com").reference.child(
+            "imagens_exercicios"
+        ).child(imageName)
+        dataRef.putBytes(byteArray).addOnCompleteListener(onCompleteListener)
+
+    }
+
+    fun deleteFile(id:String){
+        Firebase.storage("gs://gymapp-f187a.appspot.com").reference.child(
+            "imagens_exercicios"
+        ).child(id).delete()
+    }
+
+
 }
