@@ -1,21 +1,18 @@
 package br.com.viniciusapps.gym_app.infra.firebase.storage
 
-import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.Firebase
+import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.storage
 
 class Storage {
 
 
-    private fun addFile() {
-        Firebase.storage("").reference.child("").putBytes(ByteArray(0)).addOnCompleteListener(
-            OnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.e("TAG", "addFile: " + task.result?.storage?.downloadUrl)
-                } else {
-
-                }
-            })
+     fun addFile(
+        byteArray: ByteArray,
+        onCompleteListener: OnCompleteListener<UploadTask.TaskSnapshot>
+    ) {
+        Firebase.storage("gs://gymapp-f187a.appspot.com").reference.child("teste")
+            .putBytes(byteArray).addOnCompleteListener(onCompleteListener)
     }
 }

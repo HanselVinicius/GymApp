@@ -1,7 +1,7 @@
 package br.com.viniciusapps.gym_app.model.treino
 
 import br.com.viniciusapps.gym_app.model.exercicio.Exercicio
-import java.sql.Timestamp
+import com.google.firebase.Timestamp
 
 class Treino {
 
@@ -11,11 +11,15 @@ class Treino {
         }
     }
 
-    private val nome:Long
-    private val descricao:String
-    private val data:Timestamp
-    private val exercicios:ArrayList<Exercicio>
+    private var nome:Long =0L
+    private lateinit  var descricao:String
+    private lateinit var data: Timestamp
+    private lateinit var exercicios:ArrayList<Exercicio>
 
+
+    constructor(){
+
+    }
 
     fun getNome(): Long {
         return nome

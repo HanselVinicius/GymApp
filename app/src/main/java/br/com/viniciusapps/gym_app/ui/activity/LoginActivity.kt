@@ -22,7 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import br.com.viniciusapps.gym_app.infra.firebase.authentication.Authentication
 import br.com.viniciusapps.gym_app.infra.navigation.SetupNavigation
 import br.com.viniciusapps.gym_app.ui.theme.Gym_appTheme
-import br.com.viniciusapps.gym_app.ui.components.AuthComponent
+import br.com.viniciusapps.gym_app.ui.components.authentication.AuthComponent
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -74,11 +74,15 @@ fun loginAction(username: String, password: String, scope: CoroutineScope, navCo
             run {
                 if(!task.isSuccessful) {
                     scope.launch {
-                        snac.showSnackbar("Entradas Inválidas")
+                        snac.showSnackbar("Erro ao executar o login")
                     }
                     return@run
                 }
-                navController.navigate("home/${task.result.user?.uid}",)
+                navController.navigate("home/${task.result.user?.uid}",){
+                    popUpTo("login"){
+                        inclusive = true
+                    }
+                }
             }
         }
     }catch (ex: RuntimeException){

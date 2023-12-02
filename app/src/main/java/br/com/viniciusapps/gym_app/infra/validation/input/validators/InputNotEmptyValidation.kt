@@ -1,5 +1,6 @@
-package br.com.viniciusapps.gym_app.infra.validation.input
+package br.com.viniciusapps.gym_app.infra.validation.input.validators
 
+import br.com.viniciusapps.gym_app.infra.validation.input.InputValidators
 
 
 class InputNotEmptyValidation: InputValidators {

@@ -11,5 +11,5 @@ interface TreinoRepository {
 //
 //        fun delete(treino: Treino)
 //
-//        fun getAll(): ArrayList<Treino>
+        fun getAll(): ArrayList<Treino>
 }

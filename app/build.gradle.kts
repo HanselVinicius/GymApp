@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "br.com.viniciusapps.gym_app"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -75,7 +75,9 @@ dependencies {
     val nav_version = "2.5.3"
 
     implementation("io.coil-kt:coil-compose:2.0.0-rc01")
-
+    implementation ("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
+    implementation ("com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2")
+    implementation ("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))

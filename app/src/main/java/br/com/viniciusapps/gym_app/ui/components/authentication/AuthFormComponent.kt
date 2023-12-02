@@ -1,4 +1,4 @@
-package br.com.viniciusapps.gym_app.ui.components
+package br.com.viniciusapps.gym_app.ui.components.authentication
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,7 +38,6 @@ import br.com.viniciusapps.gym_app.ui.activity.RegisterActivity
 import br.com.viniciusapps.gym_app.ui.theme.OrangeStrong
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthComponent(
     modifier: Modifier = Modifier,
@@ -58,6 +57,7 @@ fun AuthComponent(
         val username = remember { mutableStateOf(TextFieldValue()) }
         val password = remember { mutableStateOf(TextFieldValue()) }
         val passwordVisible = remember { mutableStateOf(false) }
+        val secondPassword = remember { mutableStateOf(TextFieldValue()) }
 
         Text(
             text = text,
@@ -68,34 +68,14 @@ fun AuthComponent(
                 fontFamily = FontFamily.SansSerif
             )
         )
-        Spacer(modifier = Modifier.height(20.dp))
-        TextField(
-            value = username.value,
-            label = { Text(text = "Email") },
-            singleLine = true,
-            onValueChange = { username.value = it })
-
+        TextFields(username, password, passwordVisible)
+        IsRegisterScreen(tela, navController!!, secondPassword)
         Spacer(modifier = Modifier.height(20.dp))
 
-        TextField(value = password.value,
-            label = { Text(text = "Senha") },
-            singleLine = true,
-            onValueChange = { password.value = it },
-            visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            trailingIcon = {
-                val image = if (passwordVisible.value)
-                    Icons.Filled.Visibility
-                else Icons.Filled.VisibilityOff
-                val description = if (passwordVisible.value) "Esconder Senha" else "Mostrar Senha"
-                IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                    Icon(imageVector = image, description)
-                }
-            })
-        Spacer(modifier = Modifier.height(20.dp))
-        IsRegisterScreen(tela, navController!!, password.value.text)
-        Spacer(modifier = Modifier.height(20.dp))
         ElevatedButton(onClick = {
+            if((password.value.text != secondPassword.value.text) && tela == RegisterActivity::class.java){
+                return@ElevatedButton
+            }
             onClick(username.value.text, password.value.text)
         }, colors = ButtonDefaults.buttonColors(
             OrangeStrong
@@ -105,10 +85,44 @@ fun AuthComponent(
     }
 }
 
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun TextFields(
+    username: MutableState<TextFieldValue>,
+    password: MutableState<TextFieldValue>,
+    passwordVisible: MutableState<Boolean>
+) {
+    Spacer(modifier = Modifier.height(20.dp))
+    TextField(
+        value = username.value,
+        label = { Text(text = "Email") },
+        singleLine = true,
+        onValueChange = { username.value = it })
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    TextField(value = password.value,
+        label = { Text(text = "Senha") },
+        singleLine = true,
+        onValueChange = { password.value = it },
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        trailingIcon = {
+            val image = if (passwordVisible.value)
+                Icons.Filled.Visibility
+            else Icons.Filled.VisibilityOff
+            val description = if (passwordVisible.value) "Esconder Senha" else "Mostrar Senha"
+            IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+                Icon(imageVector = image, description)
+            }
+        })
+    Spacer(modifier = Modifier.height(20.dp))
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IsRegisterScreen(tela: Class<*>? = null, navController: NavController, password: String) {
+fun IsRegisterScreen(tela: Class<*>? = null, navController: NavController, secondPassword:MutableState<TextFieldValue>) {
     if (tela != RegisterActivity::class.java) {
         Spacer(modifier = Modifier.height(20.dp))
         ClickableText(
@@ -119,7 +133,6 @@ fun IsRegisterScreen(tela: Class<*>? = null, navController: NavController, passw
         )
         return
     }
-    val secondPassword = remember { mutableStateOf(TextFieldValue()) }
     val secondPasswordVisible = remember { mutableStateOf(false) }
 
     Spacer(modifier = Modifier.height(20.dp))
@@ -129,7 +142,6 @@ fun IsRegisterScreen(tela: Class<*>? = null, navController: NavController, passw
         onValueChange = { secondPassword.value = it },
         visualTransformation = if (secondPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        isError = !secondPassword.value.equals(password),
         trailingIcon = {
             val image = if (secondPasswordVisible.value)
                 Icons.Filled.Visibility

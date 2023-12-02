@@ -20,6 +20,17 @@ class Exercicio {
         this.observacoes = observacoes
     }
 
+    fun getNome():Long{
+        return this.nome
+    }
+
+    fun getImagem():URL{
+        return this.imagem
+    }
+
+    fun getObservacoes():String{
+        return this.observacoes
+    }
 
 }
 
