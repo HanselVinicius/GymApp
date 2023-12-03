@@ -5,7 +5,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.storage
 
-class Storage {
+object Storage {
 
     fun addFile(imageName: String,
         byteArray: ByteArray,

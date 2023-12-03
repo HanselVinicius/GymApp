@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import br.com.viniciusapps.gym_app.infra.firebase.authentication.Authentication
 import br.com.viniciusapps.gym_app.ui.theme.Gym_appTheme
@@ -27,6 +28,7 @@ import java.lang.NullPointerException
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             Gym_appTheme {
                 Surface(
@@ -46,11 +48,12 @@ class RegisterActivity : ComponentActivity() {
 fun RegisterComponent(navController: NavController) {
     val scope = rememberCoroutineScope()
     val snac = remember { SnackbarHostState() }
+
     Scaffold(snackbarHost = {
         SnackbarHost(hostState = snac)
     }) { _ ->
         AuthComponent(text = "Registro", onClick = { username, password ->
-            registerAction(username, password, scope, snac,navController)
+            registerAction(username, password, scope, snac, navController)
 
         }, tela = RegisterActivity::class.java, navController = navController)
     }
@@ -68,14 +71,13 @@ private fun registerAction(
         try {
             Authentication.create(
                 FirebaseAuth.getInstance(),
-                username,
-                password
-            )
-                .register { task ->
+                username.trim(),
+                password.trim()
+            ).register { task ->
                     run {
                         if (!task.isSuccessful) {
                             scope.launch {
-                                snac.showSnackbar("Erro ao registrar")
+                                snac.showSnackbar("Erro ao registrar favor verificar se a senha possui mais de 6 caracteres")
                             }
                             return@run
                         }

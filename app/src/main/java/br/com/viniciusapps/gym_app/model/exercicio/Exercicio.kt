@@ -24,6 +24,12 @@ data class Exercicio (
 
             return exercicios
         }
+
+
+        fun createEmptyExercicio(): Exercicio {
+            return Exercicio("",0L,"","")
+        }
+
     }
 
     fun getImageName():String{

@@ -21,12 +21,13 @@ class FirestoreTreinoRepositoryImpl(private val firebaseFirestore: FirebaseFires
     }
 
     override fun delete(treino: Treino) {
-        this.firebaseFirestore.collection("Treino").document(treino.getDocumentId()).delete()
+        val treinoRef = this.firebaseFirestore.collection("Treino").document(treino.getDocumentId())
+        treinoRef.update("active", false)
     }
 
 override fun getAll(userId: String, onGetCallback:(ArrayList<Treino>)->Unit) {
     val listDeTreinos = ArrayList<Treino>()
-    this.firebaseFirestore.collection("Treino").whereEqualTo("userId", userId).get()
+    this.firebaseFirestore.collection("Treino").whereEqualTo("userId", userId).whereEqualTo("active",true).get()
         .addOnSuccessListener { result ->
             for (document in result) {
                 val treino = Treino.fromFirebaseCreate(
@@ -40,7 +41,6 @@ override fun getAll(userId: String, onGetCallback:(ArrayList<Treino>)->Unit) {
                 listDeTreinos.add(treino)
             }
             onGetCallback(listDeTreinos)
-            Log.d("TAG", "getAll: data fetched $listDeTreinos " )
         }
 }
 

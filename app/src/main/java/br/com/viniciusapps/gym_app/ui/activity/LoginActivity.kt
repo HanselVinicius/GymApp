@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.viniciusapps.gym_app.infra.firebase.authentication.Authentication
@@ -67,9 +68,15 @@ fun LoginComponent(navController: NavController) {
 }
 
 
-fun loginAction(username: String, password: String, scope: CoroutineScope, navController: NavController, snac: SnackbarHostState) {
+fun loginAction(
+    username: String,
+    password: String,
+    scope: CoroutineScope,
+    navController: NavController,
+    snac: SnackbarHostState
+) {
     try {
-        val auth = Authentication.create(FirebaseAuth.getInstance(), username, password)
+        val auth = Authentication.create(FirebaseAuth.getInstance(), username.trim(), password.trim())
         auth.login { task ->
             run {
                 if(!task.isSuccessful) {
